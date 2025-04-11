@@ -35,38 +35,29 @@ router.get('/accounts', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-	console.log('Recieved Tradingview strategy alert:', req.body);
+    console.log('Received TradingView strategy alert:', req.body);
+    console.log('side field type:', typeof req.body.side);
+    console.log('side field value:', req.body.side);
 
-	const validated = await validateAlert(req.body);
-	if (!validated) {
-		res.send('Error. alert message is not valid');
-		return;
-	}
-		
-	// set dydxv3 by default for backwards compatibility
-	const exchange = req.body['exchange']?.toLowerCase() || 'dydxv3';
+    const validated = await validateAlert(req.body);
+    if (!validated) {
+        res.send('Error. alert message is not valid');
+        return;
+    }
 
-	const dexClient = new DexRegistry().getDex(exchange);
+    const exchange = req.body['exchange']?.toLowerCase() || 'dydxv3';
 
-	if (!dexClient) {
-		res.send(`Error. Exchange: ${exchange} is not supported`);
-		return;
-	}
+    const dexClient = new DexRegistry().getDex(exchange);
 
-	// TODO: add check if dex client isReady 
+    if (!dexClient) {
+        res.send(`Error. Exchange: ${exchange} is not supported`);
+        return;
+    }
 
-	try {
-		const result = await dexClient.placeOrder(req.body);
-
-		res.send('OK');
-		// checkAfterPosition(req.body);
-	} catch (e) {
-		res.send('error');
-	}
+    try {
+        const result = await dexClient.placeOrder(req.body);
+        res.send('OK');
+    } catch (e) {
+        res.send('error');
+    }
 });
-
-router.get('/debug-sentry', function mainHandler(req, res) {
-	throw new Error('My first Sentry error!');
-});
-
-export default router;
