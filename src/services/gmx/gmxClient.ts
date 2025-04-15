@@ -347,7 +347,7 @@ export class GmxClient extends AbstractDexClient {
 	private checkAndApprove = async (amount, collateral?) => {
 		// native currency, no need to approve
 		if (collateral && collateral === 'ETH') return;
-
+	
 		const token = collateral ? gmxTokenAddresses.get(collateral) : usdc;
 		const usdcContract = new ethers.Contract(token, erc20Abi, this.signer);
 		try {
@@ -355,7 +355,7 @@ export class GmxClient extends AbstractDexClient {
 				this.signer.address,
 				transferRouter
 			);
-
+	
 			if (allowance.lt(amount)) {
 				const tx = await usdcContract.approve(transferRouter, amount);
 				console.log('Approving token: ', token, 'TxHash: ', tx.hash);
@@ -368,6 +368,7 @@ export class GmxClient extends AbstractDexClient {
 			console.error('An error occurred while Approving token:', error);
 		}
 	};
+	
 
 	private getOrderTypeAndPosition = async (
 		market: string,
