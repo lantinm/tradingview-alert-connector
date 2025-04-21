@@ -445,59 +445,33 @@ export class GmxClient extends AbstractDexClient {
 		return gasPrice;
 	};
 
-	private async getExecutionFee(orderType: gmxOrderType) {
-		const readerContract = new ethers.Contract(
-			dataStore,
-			dataStoreAbi,
-			this.signer
+// [ALL LINES 1–447: Original code remains unchanged here]
+
+// Insert this new function after line 447 (right after getExecutionFee)
+
+private async getMaxLeverageMargin() {
+	const readerContract = new ethers.Contract(
+		reader, // Ensure 'reader' is the correct contract address
+		ReaderAbi, // Ensure 'ReaderAbi' is the correct ABI
+		this.signer // Your signer, likely the wallet you're interacting with
+	);
+
+	try {
+		// Fetch leverage margin from the contract
+		const leverageMarginData = await readerContract.getMaxLeverageMargin(
+			dataStore, // Ensure 'dataStore' is the correct address or parameter
+			this.signer.address // Use the address of the signer
 		);
-		const baseGasLimit = await readerContract.getUint(
-			'0xb240624f82b02b1a8e07fd5d67821e9664f273e0dc86415a33c1f3f444c81db4'
-		);
-	
-		const increaseOrderGasLimitKey =
-			'0x983e0a7f5307213e84497f2543331fe5e404db14ddf98f98dc956e0ee3ab6875';
-		const decreaseOrderGasLimitKey =
-			'0xfce7a3444b72c2d30987163c1f2e6c00cffa03bf0b6ca2f077e8db006b4cae8b';
-		const orderGasLimitKey =
-			orderType == gmxOrderType.MarketIncrease
-				? increaseOrderGasLimitKey
-				: decreaseOrderGasLimitKey;
-	
-		const estimatedGasLimit = await readerContract.getUint(orderGasLimitKey);
-	
-		const adjustedGasLimit = baseGasLimit
-			.add(estimatedGasLimit)
-			.mul(12)
-			.div(10);
-	
-		const gasPrice = await this.getGasPrice();
-		// add 20% as buffer
-		const feeTokenAmount = adjustedGasLimit.mul(gasPrice).mul(12).div(10);
-	
-		return feeTokenAmount;
+
+		// Handle the leverage margin data here
+		console.log("Max Leverage Margin:", leverageMarginData);
+
+		return leverageMarginData;
+	} catch (error) {
+		console.error("Error fetching max leverage margin:", error);
+		throw error; // Re-throw or handle the error as needed
 	}
-	
-	private async getMaxLeverageMargin() {
-		const readerContract = new ethers.Contract(
-			reader,
-			ReaderAbi,
-			this.signer
-		);
-	
-		try {
-			const leverageMarginData = await readerContract.getMaxLeverageMargin(
-				dataStore,
-				this.signer.address
-			);
-			
-			// Handle the leverage margin data here
-			console.log("Max Leverage Margin:", leverageMarginData);
-	
-			return leverageMarginData;
-		} catch (error) {
-			console.error("Error fetching max leverage margin:", error);
-			throw error;  // Re-throw or handle the error as needed
-		}
-	}
-	
+}
+
+// [No additional code needed — this ends around line 504]
+}
