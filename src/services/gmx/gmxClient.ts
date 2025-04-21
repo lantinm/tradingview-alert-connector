@@ -454,7 +454,7 @@ export class GmxClient extends AbstractDexClient {
 		const baseGasLimit = await readerContract.getUint(
 			'0xb240624f82b02b1a8e07fd5d67821e9664f273e0dc86415a33c1f3f444c81db4'
 		);
-
+	
 		const increaseOrderGasLimitKey =
 			'0x983e0a7f5307213e84497f2543331fe5e404db14ddf98f98dc956e0ee3ab6875';
 		const decreaseOrderGasLimitKey =
@@ -463,18 +463,41 @@ export class GmxClient extends AbstractDexClient {
 			orderType == gmxOrderType.MarketIncrease
 				? increaseOrderGasLimitKey
 				: decreaseOrderGasLimitKey;
-
+	
 		const estimatedGasLimit = await readerContract.getUint(orderGasLimitKey);
-
+	
 		const adjustedGasLimit = baseGasLimit
 			.add(estimatedGasLimit)
 			.mul(12)
 			.div(10);
-
+	
 		const gasPrice = await this.getGasPrice();
 		// add 20% as buffer
 		const feeTokenAmount = adjustedGasLimit.mul(gasPrice).mul(12).div(10);
-
+	
 		return feeTokenAmount;
 	}
-}
+	
+	private async getMaxLeverageMargin() {
+		const readerContract = new ethers.Contract(
+			reader,
+			ReaderAbi,
+			this.signer
+		);
+	
+		try {
+			const leverageMarginData = await readerContract.getMaxLeverageMargin(
+				dataStore,
+				this.signer.address
+			);
+			
+			// Handle the leverage margin data here
+			console.log("Max Leverage Margin:", leverageMarginData);
+	
+			return leverageMarginData;
+		} catch (error) {
+			console.error("Error fetching max leverage margin:", error);
+			throw error;  // Re-throw or handle the error as needed
+		}
+	}
+	
