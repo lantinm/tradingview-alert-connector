@@ -438,12 +438,22 @@ export class GmxClient extends AbstractDexClient {
 
 	private getGasPrice = async () => {
 		let gasPrice = await this.signer.getGasPrice();
-
-		// add 10% as buffer
+	
+		// Set a maximum cap for gas price (e.g., 5 gwei)
+		const maxGasPrice = ethers.utils.parseUnits('5', 'gwei'); // Max 5 gwei
+	
+		// Add 10% buffer to gas price
 		const buffer = gasPrice.mul(1000).div(10000);
 		gasPrice = gasPrice.add(buffer);
+	
+		// Ensure gas price doesn't exceed the max limit
+		if (gasPrice.gt(maxGasPrice)) {
+			gasPrice = maxGasPrice;
+		}
+	
 		return gasPrice;
 	};
+	
 
 // [ALL LINES 1–447: Original code remains unchanged here]
 
