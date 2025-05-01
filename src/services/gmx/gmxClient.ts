@@ -24,7 +24,7 @@ import { _sleep } from '../../helper';
 import axios from 'axios';
 import { dataStoreAbi } from './abi/dataStore';
 
-const exchangeRounter = '0x900173A66dbD345006C51fA35fA3aB760FcD843b';
+const exchangeRounter = '0x5aC4e27341e4cCcb3e5FD62f9E62db2Adf43dd57';
 const transferRouter = '0x7452c558d45f8afC8c83dAe62C3f8A5BE19c71f6';
 const reader = '0xf60becbba223eea9495da3f606753867ec10d139';
 const dataStore = '0xFD70de6b91282D8017aA4E741e9Ae325CAb992d8';
