@@ -61,7 +61,7 @@ export class GmxClient extends AbstractDexClient {
 			return;
 		}
 
-		const rpcUrl: string = config.get('GMX.Network.host');
+		const rpcUrl: string = process.env.RPC_URL || '';
 		const provider = ethers.getDefaultProvider(rpcUrl);
 		return new ethers.Wallet('0x' + process.env.GMX_PRIVATE_KEY, provider);
 	};
